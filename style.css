@@ -1,0 +1,119 @@
+body{
+  font-family: sans-serif;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+button {
+  /* margin-top: 20px; */
+  background-color: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #cfd8dc;
+}
+button:disabled {
+  background-color: #eee;
+  color: #ccc;
+  cursor: auto;
+}
+
+.visualizer {
+  display: flex;
+  flex-direction: column;
+}
+.visualizer > * {
+    margin-top: 2em;
+}
+.list {
+  /* max-width: 500px; */
+  display: flex;
+  flex-wrap: wrap;
+  background-color: whitesmoke;
+}
+.list > * {
+  display: inline-block;
+  position: relative;
+  min-width: 46px;
+  height: 23px;
+  border: 2px solid;
+  text-align: center;
+  margin: 3px 5px;
+  padding: 5px 10px;
+  box-shadow: 0px 0px 3px 1px #cfd8dc;
+}
+
+.list .compare {
+  border-color: goldenrod;
+  border-width: 3px;
+  /* opacity: 0.1; */
+}
+
+.list [class^='swap']{
+  border-color: red;
+  border-width: 3px;
+  box-shadow: 0 0 5px 1px;
+}
+.list .swap {
+  border-color: goldenrod;
+  box-shadow: inherit;
+  transition: all 1s;
+  /* opacity: 0.1; */
+}
+
+.list .anchored::after {
+  position: absolute;
+    content: '';
+    border: 3px solid red;
+    border-radius: 3px;
+    top: 0;
+    left: 0;
+    margin: 2px 0 0 2px;
+}
+
+.status > * {
+  margin-right: 5px;
+}
+.status .action {
+  text-transform: uppercase;
+}
+.status button {
+  float: right;
+}
+
+@media (max-width: 600px) {
+  h1 {
+  font-size: 1.2em;
+  color: #999;
+  margin-bottom: 0;
+  }
+}
+@media (max-width: 1024px) {
+  h1 {
+  font-size: 1.6em;
+  color: #999;
+  margin-bottom: 0;
+  }
+}
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.example-leave {
+  opacity: 1;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
