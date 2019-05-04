@@ -17,7 +17,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>Found = {this.state.found}
+      <div>
         <AnyName name={this.state.name} />
         <Visualizer list={this.state.list} />
       </div>
