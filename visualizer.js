@@ -54,7 +54,7 @@ class Visualizer extends React.Component {
     console.log('start');
     function invoke() {
       const { step } = this.state;
-      console.log('start invoke', step, this.steps.length, this.timeoutRef);
+      console.log('start invoke steps', step, this.steps.length, 'refs', this.timeoutRef, this.intervalRef);
       if (step >= this.steps.length > 0) {
         this.stop();
       } else {
@@ -68,7 +68,11 @@ class Visualizer extends React.Component {
 
   stop() {
     console.log('stop');
-    setTimeout(this.clear.bind(this), 0);
+    const ref = this.intervalRef;
+    if (ref) {
+      setTimeout(() => { console.log('stop - ref', ref); clearInterval(ref); }, this.state.delay);
+    }
+    this.intervalRef = null;
   }
 
   clear() {
@@ -80,16 +84,16 @@ class Visualizer extends React.Component {
     console.log('clear end', this.timeoutRef, this.intervalRef);
   }
 
+  delay(e) {
+    const delay = e.target.value;
+    console.log('delay', delay);
+    this.setState({ delay });
+  }
+
   cssName(current, index) {
     const action = (index == current.i || index == current.j) ? current.action : '';
     const anchored = (current.i == index) ? 'anchored' : '';
     return action + ' ' + anchored;
-  }
-
-  delay(e) {
-    const delay = e.target.value;
-    console.log('delay', delay);
-    this.setState({delay});
   }
 
   componentWillUnmount() {
@@ -99,19 +103,26 @@ class Visualizer extends React.Component {
   render() {
     const { step, list, delay } = this.state;
     const current = this.steps[step] || {};
+
+    const disabled = (step >= this.steps.length > 0);
+    const disabled_next = disabled || !!this.timeoutRef;
+    const disabled_start = disabled || !!this.timeoutRef || !!this.intervalRef;
+    const disabled_stop = disabled || 0 > step || !this.intervalRef; // note!
+    const disabled_delay = disabled_start;
     return (
       <div className="visualizer">
         <div className="list">
           {list.map((item, index) =>
-            // TBD Animation ReactCSSTransitionGroup
             <div className={this.cssName(current, index)} key={index}>{item}</div>
           )}
         </div>
 
-        <button onClick={() => this.next()} disabled={step >= this.steps.length > 0 || !!this.timeoutRef}>next</button>
-        <button onClick={() => this.start()} disabled={step >= this.steps.length > 0 || !!this.timeoutRef || !!this.intervalRef}>{(step < 0) ? 'start' : 'resume'}</button>
-        <button onClick={() => this.stop()} disabled={0 > step || step >= this.steps.length > 0 || !this.intervalRef}>stop</button>
-        <input type="range" min="0" max="3000" step="100" value={delay} onChange={(e)=>this.delay(e)} />
+        <button onClick={() => this.next()} disabled={disabled_next}>next</button>
+        <button onClick={() => this.start()} disabled={disabled_start}>{(step < 0) ? 'start' : 'resume'}</button>
+        <button onClick={() => this.stop()} disabled={disabled_stop}>stop</button>
+
+        <label htmlFor="delay" className={(disabled_delay?'disabled':'')}>Speed <input type="range" id="delay" min="0" max="3000" step="100" value={delay} title={delay} onChange={(e) => this.delay(e)} disabled={disabled_delay} /> {delay}</label>
+
         <div className="status">
           {(step >= 0) && <em>{`${step} / ${this.steps.length}`}</em>}
           <span className="action">{current.action}</span>
