@@ -5,7 +5,7 @@ import { BubbleSteps } from './bubble';
 
 class Visualizer extends React.Component {
 
-  INITIAL_STATE = { step: -1, list: props.list };
+  INITIAL_STATE = { step: -1, list: props.list, delay: 1000 };
 
   constructor(props) {
     super(props);
@@ -63,7 +63,7 @@ class Visualizer extends React.Component {
         }
       }
     }
-    this.intervalRef = setInterval(invoke.bind(this), 1000);
+    this.intervalRef = setInterval(invoke.bind(this), this.state.delay);
   }
 
   stop() {
@@ -81,9 +81,15 @@ class Visualizer extends React.Component {
   }
 
   cssName(current, index) {
-    let action = (index == current.i || index == current.j) ? current.action : '';
-    let anchored = (current.i == index) ? 'anchored' : '';
+    const action = (index == current.i || index == current.j) ? current.action : '';
+    const anchored = (current.i == index) ? 'anchored' : '';
     return action + ' ' + anchored;
+  }
+
+  delay(e) {
+    const delay = e.target.value;
+    console.log('delay', delay);
+    this.setState({delay});
   }
 
   componentWillUnmount() {
@@ -91,7 +97,7 @@ class Visualizer extends React.Component {
   }
 
   render() {
-    const { step, list } = this.state;
+    const { step, list, delay } = this.state;
     const current = this.steps[step] || {};
     return (
       <div className="visualizer">
@@ -105,7 +111,7 @@ class Visualizer extends React.Component {
         <button onClick={() => this.next()} disabled={step >= this.steps.length > 0 || !!this.timeoutRef}>next</button>
         <button onClick={() => this.start()} disabled={step >= this.steps.length > 0 || !!this.timeoutRef || !!this.intervalRef}>{(step < 0) ? 'start' : 'resume'}</button>
         <button onClick={() => this.stop()} disabled={0 > step || step >= this.steps.length > 0 || !this.intervalRef}>stop</button>
-
+        <input type="range" min="0" max="3000" step="100" value={delay} onChange={(e)=>this.delay(e)} />
         <div className="status">
           {(step >= 0) && <em>{`${step} / ${this.steps.length}`}</em>}
           <span className="action">{current.action}</span>
